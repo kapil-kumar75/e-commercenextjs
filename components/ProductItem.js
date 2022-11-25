@@ -1,7 +1,9 @@
 import Link from 'next/link'
-import React from 'react'
+import React, {useEffect} from 'react'
+import axios from 'axios'
 
 const ProductItem = ({product}) => {
+  
   return (
     <div className='card'>
       <Link href={`/product/${product.slug}`}>

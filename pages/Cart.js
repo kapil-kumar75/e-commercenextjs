@@ -6,6 +6,7 @@ import Layout from '../components/Layout'
 import {Store} from '../utils/Store'
 import {XCircleIcon, XCircleIon} from '@heroicons/react/outline'
 import {useRouter} from 'next/router'
+import dynamic from 'next/dynamic'
 
 const CartScreen = () => {
   const {state, dispatch} = useContext(Store)
@@ -20,6 +21,10 @@ const CartScreen = () => {
     dispatch({type: 'CART_REMOVE_ITEM', payload: item})
   }
 
+  const updateCartHandle = (item, qty) => {
+    const quantity = Number(qty)
+    dispatch({type: 'Add_TO_CART', payload: {...item, quantity}})
+  }
   return (
     <Layout title='Shopping cart'>
       <h1 className='mb-4 text-xl'>Shopping Cart</h1>
@@ -49,7 +54,18 @@ const CartScreen = () => {
                         </a>
                       </Link>
                     </td>
-                    <td className='p-5 text-right'>{item.quantity}</td>
+                    <td className='p-5 text-right'>
+                      <select
+                        value={item.quantity}
+                        onChange={(e) => updateCartHandle(item, e.target.value)}
+                      >
+                        {[...Array(item.countInStock).keys()].map((x) => (
+                          <option key={x + 1} value={x + 1}>
+                            {x + 1}
+                          </option>
+                        ))}
+                      </select>
+                    </td>
                     <td className='p-5 text-right'>${item.price}</td>
                     <td className='p-5 text-center'>
                       <button onClick={() => removeItemHandler(item)}>
@@ -70,7 +86,10 @@ const CartScreen = () => {
                 </div>
               </li>
               <li>
-                <button className='primary-button w-full' onClick={() => router.push('/shipping')}>
+                <button
+                  className='primary-button w-full'
+                  onClick={() => router.push(router.push('Login?redirect=/shipping'))}
+                >
                   checkout
                 </button>
               </li>
@@ -82,4 +101,4 @@ const CartScreen = () => {
   )
 }
 
-export default CartScreen
+export default dynamic(() => Promise.resolve(CartScreen), {ssr: false})
